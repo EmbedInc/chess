@@ -1,0 +1,7 @@
+chess_cover.obj
+chess_cover_list.obj
+chess_eval.obj
+chess_eval_priv.obj
+chess_move.obj
+chess_name.obj
+chess_read.obj

@@ -1,0 +1,59 @@
+                           Program TEST_CHPOS
+
+test_chpos <filename>
+
+Test the chess move generator and coverage checker.  A chess board
+position is read from the input file.  All possible moves and the
+squares covered are shown for both sides.
+
+The input file contains a chess position as sortof a "picture" of the
+board position.  The first 8 lines of the file must contain 8 tokens
+each, separated by spaces.  Additional lines are ignored.  Each token
+specifies the contents of one chess square.  The "picture" is from
+white's point of view.  The lines therefore represent the rows from
+black's back row to white's back row.  The tokens accross each line are
+for the squares of that row from white's left to white's right.  The
+file is case-insensitive.
+
+The allowable tokens are:
+
+  BP  -  black pawn
+  B2  -  black pawn, just jumped 2 last move
+  BR  -  black rook
+  BN  -  black knight
+  BB  -  black bishop
+  BQ  -  black queen
+  BK  -  black king
+
+  WP  -  white pawn
+  W2  -  white pawn, just jumped 2 last move
+  WR  -  white rook
+  WN  -  white knight
+  WB  -  white bishop
+  WQ  -  white queen
+  WK  -  white king
+
+  OR  -  piece in its original position.
+
+  --  -  empty square
+
+Unless OR is used, it will be assumed the piece has been moved at least
+once since the start of the game.  This will effect whether castleing
+is allowed.
+
+The B2 and W2 tokens are used to distinguish pawns that just jumped two
+spaces forward in the previous move.  This will effect whether the
+opponent may use the en-passant move to capture the pawn.
+
+As an example, the starting position would look like this, except that
+the tokens for all non-empty squares should be replaced by OR since all
+pieces are in their original position.
+
+  BR BN BB BQ BK BB BN BR
+  BP BP BP BP BP BP BP BP
+  -- -- -- -- -- -- -- --
+  -- -- -- -- -- -- -- --
+  -- -- -- -- -- -- -- --
+  -- -- -- -- -- -- -- --
+  WP WP WP WP WP WP WP WP
+  WR WN WB WQ WK WB WN WR
