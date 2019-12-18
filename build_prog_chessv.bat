@@ -1,10 +1,11 @@
 @echo off
+rem   BUILD_PROG_CHESSV [-dbg]
+rem
+rem   Build the CHESSV program.
+rem
 setlocal
 call build_pasinit
 set prog=chessv
-
-set dbg=
-if "%1"=="-dbg" set dbg=/debug
 
 rem
 rem   Build the library.
@@ -35,8 +36,17 @@ call src_pas %srcdir% %prog%_win_stat %1
 
 call src_lib %srcdir% %prog%_prog private
 rem
-rem   Build the program.
+rem   Compile the top level module.
 rem
 call src_pas %srcdir% %prog% %1
-
+rem
+rem   Build the executable.
+rem
+set dbg=
+if "%1"=="-dbg" set dbg=/debug
 call src_link %prog% %prog% %dbg% %prog%_prog.lib
+set dbg=
+
+set private=
+if "%1"=="-dbg" set private=private
+call src_exeput %prog% %private%
