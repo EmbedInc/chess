@@ -303,6 +303,7 @@ begin
 *   A key was pressed or released.
 }
 rend_ev_key_k: begin                   {a key was pressed or released}
+  discard( rend_event_key_multiple(ev) ); {discard immediately following repeated events}
   modk := ev.key.modk;                 {make local copy of modifier keys}
   modk := modk - [rend_key_mod_shiftlock_k]; {SHIFTLOCK modifier will be ignored}
   case gui_key_k_t(ev.key.key_p^.id_user) of {which key is it ?}
