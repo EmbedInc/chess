@@ -101,7 +101,7 @@ chess_eval_parmtyp_real_k: (           {floating point}
     close_p: ^procedure (              {call to deallocate all EVAL resources}
       in      eval_p: chess_eval_p_t); {pointer to this move evaluator use}
       val_param;
-    priv_p: univ_ptr;                  {pointer to impementation-private memory}
+    priv_p: univ_ptr;                  {pointer to private memory}
     end;
 {
 *

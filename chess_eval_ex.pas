@@ -6,9 +6,6 @@
 *   This move evaluator is not intended to be useful for playing chess,
 *   but only to serve as an example of how to create your own custom
 *   move evaluator.
-*
-*   A custom version of the CHESSV_W executable using this move evaluator
-*   can be built with the accompanying BUILE_CHESSV script.
 }
 module chess_eval;
 define chess_eval_open;
@@ -106,7 +103,7 @@ var
 
 begin
 {
-*   Create private state, and save a pointe to it in EVAL.
+*   Create private state, and save a pointer to it in EVAL.
 }
   chess_eval_malloc (                  {allocate mem for our private state}
     eval, sizeof(priv_p^), priv_p);
