@@ -77,6 +77,8 @@ id_mveval_k: begin                     {MOVE EVAL}
       end;
 
     end;                               {end of selected menu entry cases}
+
+  gui_menu_clear (menu);               {clear any selected menu entries}
   end;
 {
 *************************************************************************
