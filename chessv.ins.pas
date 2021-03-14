@@ -188,27 +188,32 @@ procedure chessv_mmenu_init;           {set up state for main menu}
   extern;
 
 function chessv_mmenu_action (         {perform main menu ACTION operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
   :gui_evhan_k_t;
   val_param; extern;
 
 function chessv_mmenu_file (           {perform main menu FILE operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
-  :gui_evhan_k_t;
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
+  :gui_evhan_k_t;                      {events handled indication}
   val_param; extern;
 
 function chessv_mmenu_plrs (           {perform main menu PLAYERS operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
   :gui_evhan_k_t;
   val_param; extern;
 
 function chessv_mmenu_mveval (         {perform main menu MOVE EVAL operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
   :gui_evhan_k_t;
   val_param; extern;
 
 function chessv_mmenu_view (           {perform main menu VIEW operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
   :gui_evhan_k_t;
   val_param; extern;
 

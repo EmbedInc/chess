@@ -4,7 +4,7 @@ define chessv_mmenu_plrs;
 {
 *************************************************************************
 *
-*   Function CHESSV_MMENU_PLRS (ULX, ULY)
+*   Function CHESSV_MMENU_PLRS (ULX, ULY, ABTREE)
 *
 *   The main menu PLAYERS option has just been selected.  This routine is
 *   called from inside the main menu event handler.  The main menu event
@@ -12,9 +12,13 @@ define chessv_mmenu_plrs;
 *
 *   ULX,ULY is the preferred upper left corner within the root drawing
 *   window of any subordinate menu.
+*
+*   ABTREE is returned TRUE unlrdd it is known that the whole menu tree
+*   should not be aborted.
 }
 function chessv_mmenu_plrs (           {perform main menu PLAYERS operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
   :gui_evhan_k_t;
   val_param;
 
@@ -37,6 +41,7 @@ begin
   name.max := size_char(name.str);     {init local var string}
 
   chessv_mmenu_plrs := gui_evhan_did_k; {init to all events processed}
+  abtree := true;                      {init to abort whole menu tree when done}
 
   tp := tparm;                         {make copy of official text control params}
   tp.lspace := 1.0;
@@ -55,6 +60,7 @@ begin
 loop_main:                             {back here for new select from our top menu}
   if not gui_menu_select (menu, iid, sel_p) then begin {menu cancelled ?}
     chessv_mmenu_plrs := menu.evhan;   {pass back how events were handled}
+    abtree := iid = -1;                {abort whole menu tree ?}
     return;
     end;
   case iid of
@@ -109,12 +115,16 @@ otherwise
     menu.win.rect.y + sel_p^.yt + 2.0);
 
   if not gui_menu_select (menu2, iid, sel_p) then begin {menu cancelled ?}
-    goto loop_main;
+    if iid = -2 then goto loop_main;
     end;
   gui_menu_delete (menu2);             {delete subordinate menu}
   gui_menu_delete (menu);              {delete and erase parent menu}
 
   case iid of                          {which menu entry was selected ?}
+-1: begin                              {abort}
+      abtree := true;
+      return;
+      end;
 0:  begin                              {user}
       pl := player_user_k;
       end;

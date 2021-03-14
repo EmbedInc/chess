@@ -4,7 +4,7 @@ define chessv_mmenu_mveval;
 {
 *************************************************************************
 *
-*   Function CHESSV_MMENU_MVEVAL (ULX, ULY)
+*   Function CHESSV_MMENU_MVEVAL (ULX, ULY, ABTREE)
 *
 *   The main menu MOVE EVAL option has just been selected.  This routine is
 *   called from inside the main menu event handler.  The main menu event
@@ -12,9 +12,13 @@ define chessv_mmenu_mveval;
 *
 *   ULX,ULY is the preferred upper left corner within the root drawing
 *   window of any subordinate menu.
+*
+*   ABTREE is returned TRUE unlrdd it is known that the whole menu tree
+*   should not be aborted.
 }
 function chessv_mmenu_mveval (         {perform main menu MOVE EVAL operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
   :gui_evhan_k_t;
   val_param;
 
@@ -45,6 +49,7 @@ begin
   err.max := size_char(err.str);
 
   chessv_mmenu_mveval := gui_evhan_did_k; {init to all events processed}
+  abtree := true;                      {init to abort whole menu tree when done}
 
   tp := tparm;                         {make copy of official text control params}
   tp.lspace := 1.0;
@@ -83,6 +88,7 @@ chess_eval_parmtyp_real_k: begin       {parameter type is REAL}
 loop_top_select:                       {back here to select from our top menu}
   if not gui_menu_select (menu, iid, sel_p) then begin {menu cancelled ?}
     chessv_mmenu_mveval := menu.evhan; {pass back how events were handled}
+    abtree := iid = -1;                {abort whole menu tree ?}
     return;
     end;
 {

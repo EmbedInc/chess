@@ -352,20 +352,24 @@ err_at_line:                           {STAT set, add FNAM, LNUM}
   file_close (conn);
   end;
 {
-*************************************************************************
+********************************************************************************
 *
-*   Function CHESSV_MMENU_FILE (ULX, ULY)
+*   Function CHESSV_MMENU_FILE (ULX, ULY, ABTREE)
 *
-*   The main menu FILE option has just been selected.  This routine is
-*   called from inside the main menu event handler.  The main menu event
-*   handler will return with the function return value.
+*   The main menu FILE option has just been selected.  This routine is called
+*   from inside the main menu event handler.  The main menu event handler will
+*   return with the function return value.
 *
 *   ULX,ULY is the preferred upper left corner within the root drawing
 *   window of any subordinate menu.
+*
+*   ABTREE is returned TRUE unlrdd it is known that the whole menu tree
+*   should not be aborted.
 }
 function chessv_mmenu_file (           {perform main menu FILE operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
-  :gui_evhan_k_t;
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
+  :gui_evhan_k_t;                      {events handled indication}
   val_param;
 
 const
@@ -389,7 +393,7 @@ var
   stat: sys_err_t;                     {completion status code}
 
 label
-  loop_select, leave, abort;
+  loop_select, done_select, leave, abort;
 {
 ********************
 *
@@ -494,8 +498,10 @@ begin
   gui_menu_place (menu2,               {set location of new menu}
     menu.win.rect.x + sel_p^.xr,
     menu.win.rect.y + sel_p^.yt + 2.0);
-  if not gui_menu_select (menu2, id2, sel2_p) {get user selection}
-    then return;                       {selection was cancelled}
+  if not gui_menu_select (menu2, id2, sel2_p) then begin {menu cancelled ?}
+    abtree := id2 = -1;                {abort the whole menu tree ?}
+    return;
+    end;
 
   string_list_pos_abs (flist, id2);    {go to list pos for selected menu entry}
   string_fnam_extend (flist.str_p^, '.chp'(0), lnam); {make full leaf name}
@@ -546,8 +552,10 @@ begin
   gui_menu_place (menu, ulx - 2, uly); {set menu location within parent window}
 
 loop_select:                           {back here to do another top select}
+  abtree := true;                      {init to abort whole menu tree when done}
   if not gui_menu_select (menu, iid, sel_p) then begin {menu cancelled ?}
     chessv_mmenu_file := menu.evhan;   {pass back how events were handled}
+    abtree := iid = -1;                {abort the whole menu tree ?}
     goto abort;
     end;
   case iid of
@@ -587,7 +595,7 @@ loop_select:                           {back here to do another top select}
 }
 1: begin
   if not select_file (name)            {get user file selection from list}
-    then goto loop_select;             {user cancelled file selection}
+    then goto done_select;             {user cancelled file selection}
 
   chessv_read_pos (name, stat);        {read new chess position from file}
   if sys_error(stat) then begin
@@ -607,7 +615,7 @@ loop_select:                           {back here to do another top select}
 }
 2: begin
   if not select_file (name)            {get user file selection from list}
-    then goto loop_select;             {user cancelled file selection}
+    then goto done_select;             {user cancelled file selection}
 
   file_delete_name (name, stat);       {delete the file}
   if sys_error(stat) then begin
@@ -623,6 +631,8 @@ loop_select:                           {back here to do another top select}
 **********
 }
     end;                               {end of main menu selection cases}
+done_select:
+  if not abtree then goto loop_select; {back for another try ?}
 
 leave:
   gui_menu_delete (menu);              {erase and delete main menu}

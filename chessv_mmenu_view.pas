@@ -4,7 +4,7 @@ define chessv_mmenu_view;
 {
 *************************************************************************
 *
-*   Function CHESSV_MMENU_VIEW (ULX, ULY)
+*   Function CHESSV_MMENU_VIEW (ULX, ULY, ABTREE)
 *
 *   The main menu VIEW option has just been selected.  This routine is
 *   called from inside the main menu event handler.  The main menu event
@@ -12,9 +12,13 @@ define chessv_mmenu_view;
 *
 *   ULX,ULY is the preferred upper left corner within the root drawing
 *   window of any subordinate menu.
+*
+*   ABTREE is returned TRUE unlrdd it is known that the whole menu tree
+*   should not be aborted.
 }
 function chessv_mmenu_view (           {perform main menu VIEW operation}
-  in      ulx, uly: real)              {preferred sub menu UL in root window}
+  in      ulx, uly: real;              {preferred sub menu UL in root window}
+  out     abtree: boolean)             {abort the whole menu tree}
   :gui_evhan_k_t;
   val_param;
 
@@ -31,6 +35,7 @@ begin
   name.max := size_char(name.str);     {init local var string}
 
   chessv_mmenu_view := gui_evhan_did_k; {init to all events processed}
+  abtree := true;                      {init to abort whole menu tree when done}
 
   tp := tparm;                         {make copy of official text control params}
   tp.lspace := 1.0;
@@ -74,6 +79,7 @@ begin
 
   if not gui_menu_select (menu, iid, sel_p) then begin {menu cancelled ?}
     chessv_mmenu_view := menu.evhan;   {pass back how events were handled}
+    abtree := iid = -1;                {abort whole menu tree ?}
     return;
     end;
   gui_menu_delete (menu);              {delete and erase the menu}

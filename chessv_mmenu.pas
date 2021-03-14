@@ -32,11 +32,18 @@ var
   sel_p: gui_menent_p_t;               {pointer to selected menu entry}
   ev: rend_event_t;                    {RENDlib event descriptor}
   ulx, uly: real;                      {UL corner of subordinate menus in main win}
+  abtree: boolean;                     {abort whole menu tree}
+
+label
+  retry, leave;
 
 begin
+  abtree := true;                      {init to abort the whole menu tree when done}
+
+retry:
   if not gui_menu_select (menu, iid, sel_p) then begin {no selection made ?}
     chessv_mmenu_evhan := menu.evhan;  {pass back event handling status}
-    return;
+    goto leave;
     end;
   chessv_mmenu_evhan := gui_evhan_did_k; {events were processed and handled}
 
@@ -57,27 +64,29 @@ id_exit_k: begin                       {EXIT}
       end;
 
 id_file_k: begin                       {FILE}
-      chessv_mmenu_evhan := chessv_mmenu_file (ulx, uly);
+      chessv_mmenu_evhan := chessv_mmenu_file (ulx, uly, abtree);
       end;
 
 id_view_k: begin                       {VIEW}
-      chessv_mmenu_evhan := chessv_mmenu_view (ulx, uly);
+      chessv_mmenu_evhan := chessv_mmenu_view (ulx, uly, abtree);
       end;
 
 id_players_k: begin                    {PLAYERS}
-      chessv_mmenu_evhan := chessv_mmenu_plrs (ulx, uly);
+      chessv_mmenu_evhan := chessv_mmenu_plrs (ulx, uly, abtree);
       end;
 
 id_action_k: begin                     {ACTION}
-      chessv_mmenu_evhan := chessv_mmenu_action (ulx, uly);
+      chessv_mmenu_evhan := chessv_mmenu_action (ulx, uly, abtree);
       end;
 
 id_mveval_k: begin                     {MOVE EVAL}
-      chessv_mmenu_evhan := chessv_mmenu_mveval (ulx, uly);
+      chessv_mmenu_evhan := chessv_mmenu_mveval (ulx, uly, abtree);
       end;
 
     end;                               {end of selected menu entry cases}
+  if not abtree then goto retry;
 
+leave:
   gui_menu_clear (menu);               {clear any selected menu entries}
   end;
 {
