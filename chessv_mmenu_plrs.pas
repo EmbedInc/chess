@@ -48,12 +48,8 @@ begin
   rend_set.text_parms^ (tp);
 
   gui_menu_create (menu, win_root);    {create our main menu}
-  gui_mmsg_init (                      {init for reading menu entries from message}
-    mmsg, 'chessv_prog', 'menu_players', nil, 0);
-  while gui_mmsg_next (mmsg, name, shcut, iid) do begin {once for each entry}
-    gui_menu_ent_add (menu, name, shcut, iid); {add this entry to menu}
-    end;                               {back to add next entry to the menu}
-  gui_mmsg_close (mmsg);               {done reading menu entries message}
+  gui_menu_ent_add_mmsg (              {create menu entries from message}
+    menu, 'chessv_prog', 'menu_players', nil, 0);
 
   gui_menu_place (menu, ulx - 2, uly); {set menu location within parent window}
 
@@ -111,7 +107,6 @@ otherwise
         end;
       end;
     end;                               {back to add next entry to the menu}
-  gui_mmsg_close (mmsg);               {done reading menu entries message}
   gui_menu_place (menu2,               {set location of new menu}
     menu.win.rect.x + sel_p^.xr,
     menu.win.rect.y + sel_p^.yt + 2.0);

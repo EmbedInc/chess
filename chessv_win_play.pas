@@ -44,9 +44,6 @@ var
   pos2: chess_pos_t;                   {chess position after move}
   tp: rend_text_parms_t;               {local copy of text control parameters}
   menu: gui_menu_t;                    {popup menu object}
-  mmsg: gui_mmsg_t;                    {menu entries message object}
-  name: string_var132_t;               {menu entry name}
-  shcut: string_index_t;               {index of shortcut key within entry name}
   iid: sys_int_machine_t;              {integer menu entry ID}
   sel_p: gui_menent_p_t;               {pointer to selected menu entry}
 
@@ -54,8 +51,6 @@ label
   legal_move, notus, did_event;
 
 begin
-  name.max := size_char(name.str);     {init local var string}
-
   rend_event_get (ev);                 {get the next event from the event queue}
   case ev.ev_type of                   {what kind of event is it ?}
 {
@@ -198,12 +193,8 @@ legal_move:
     chessv_stat_msg ('chessv_prog', 'stat_promote', nil, 0);
 
     gui_menu_create (menu, win_play);  {create menu}
-    gui_mmsg_init (                    {init for reading menu entries from message}
-      mmsg, 'chessv_prog', 'menu_promote', nil, 0);
-    while gui_mmsg_next (mmsg, name, shcut, iid) do begin {once for each entry}
-      gui_menu_ent_add (menu, name, shcut, iid); {add this entry to menu}
-      end;                             {back to add next entry to the menu}
-    gui_mmsg_close (mmsg);             {done reading menu entries message}
+    gui_menu_ent_add_mmsg (            {create menu entries from message}
+      menu, 'chessv_prog', 'menu_promote', nil, 0);
     gui_menu_place (menu, x - 2, y);   {set menu location within parent window}
 
     if not gui_menu_select (menu, iid, sel_p) then begin {menu cancelled ?}
