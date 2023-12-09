@@ -2,19 +2,19 @@ module chessv_mmenu_plrs;
 define chessv_mmenu_plrs;
 %include 'chessv2.ins.pas';
 {
-*************************************************************************
+********************************************************************************
 *
 *   Function CHESSV_MMENU_PLRS (ULX, ULY, ABTREE)
 *
-*   The main menu PLAYERS option has just been selected.  This routine is
-*   called from inside the main menu event handler.  The main menu event
-*   handler will return with the function return value.
+*   The main menu PLAYERS option has just been selected.  This routine is called
+*   from inside the main menu event handler.  The main menu event handler will
+*   return with the function return value.
 *
-*   ULX,ULY is the preferred upper left corner within the root drawing
-*   window of any subordinate menu.
+*   ULX,ULY is the preferred upper left corner within the root drawing window of
+*   any subordinate menu.
 *
-*   ABTREE is returned TRUE unlrdd it is known that the whole menu tree
-*   should not be aborted.
+*   ABTREE is returned TRUE unless it is known that the whole menu tree should
+*   not be aborted.
 }
 function chessv_mmenu_plrs (           {perform main menu PLAYERS operation}
   in      ulx, uly: real;              {preferred sub menu UL in root window}
@@ -44,7 +44,7 @@ begin
   abtree := true;                      {init to abort whole menu tree when done}
 
   tp := tparm;                         {make copy of official text control params}
-  tp.lspace := 1.0;
+  tp.lspace := 1.0;                    {adjust to how needed in menus}
   rend_set.text_parms^ (tp);
 
   gui_menu_create (menu, win_root);    {create our main menu}
@@ -60,7 +60,7 @@ begin
 loop_main:                             {back here for new select from our top menu}
   if not gui_menu_select (menu, iid, sel_p) then begin {menu cancelled ?}
     chessv_mmenu_plrs := menu.evhan;   {pass back how events were handled}
-    abtree := iid = -1;                {abort whole menu tree ?}
+    abtree := iid = gui_mensel_cancel_k; {abort whole menu tree on user cancel}
     return;
     end;
   case iid of
@@ -82,6 +82,8 @@ otherwise
 *   type of the selected player.
 }
   gui_menu_create (menu2, win_root);   {create submenu}
+  menu2.flags := menu2.flags + [
+    gui_menflag_pickdel_k];            {delete on pick, not just cancel}
   gui_mmsg_init (                      {init for reading menu entries from message}
     mmsg, 'chessv_prog', 'menu_playtype', nil, 0);
   while gui_mmsg_next (mmsg, name, shcut, iid) do begin {once for each entry}
@@ -114,17 +116,13 @@ otherwise
     menu.win.rect.x + sel_p^.xr,
     menu.win.rect.y + sel_p^.yt + 2.0);
 
-  if not gui_menu_select (menu2, iid, sel_p) then begin {menu cancelled ?}
-    if iid = -2 then goto loop_main;
+  discard( gui_menu_select (menu2, iid, sel_p) ); {get menu selection result into IID}
+  if iid = gui_mensel_prev_k then begin {user wants back to previous menu ?}
+    goto loop_main;
     end;
-  gui_menu_delete (menu2);             {delete subordinate menu}
-  gui_menu_delete (menu);              {delete and erase parent menu}
 
+  gui_menu_delete (menu);              {delete and erase parent menu}
   case iid of                          {which menu entry was selected ?}
--1: begin                              {abort}
-      abtree := true;
-      return;
-      end;
 0:  begin                              {user}
       pl := player_user_k;
       end;
@@ -137,6 +135,9 @@ otherwise
 3:  begin                              {client}
       pl := player_client_k;
       end;
+otherwise                              {any other abort reason not already handled}
+    abtree := true;
+    return;
     end;                               {end of submenu selection cases}
   if white
     then playerw := pl

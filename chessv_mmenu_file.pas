@@ -2,7 +2,7 @@ module chessv_mmenu_file;
 define chessv_mmenu_file;
 %include 'chessv2.ins.pas';
 {
-*************************************************************************
+********************************************************************************
 *
 *   Subroutine CHESSV_WRITE_POS (FNAM, STAT)
 *
@@ -134,13 +134,13 @@ err:                                   {error, STAT set, output file open}
   file_close (conn);
   end;
 {
-*************************************************************************
+********************************************************************************
 *
 *   Subroutine CHESSV_READ_POS (FNAM, STAT)
 *
-*   Read a new chess position from the file of name FNAM.  No state is
-*   altered if STAT is returned indicating an error.  If successful,
-*   the program mode will be switched to PAUSE.
+*   Read a new chess position from the file of name FNAM.  No state is altered
+*   if STAT is returned indicating an error.  If successful, the program mode
+*   will be switched to PAUSE.
 }
 procedure chessv_read_pos (            {read new chess position from file}
   in      fnam: univ string_var_arg_t; {name of file to read position from}
@@ -360,11 +360,11 @@ err_at_line:                           {STAT set, add FNAM, LNUM}
 *   from inside the main menu event handler.  The main menu event handler will
 *   return with the function return value.
 *
-*   ULX,ULY is the preferred upper left corner within the root drawing
-*   window of any subordinate menu.
+*   ULX,ULY is the preferred upper left corner within the root drawing window of
+*   any subordinate menu.
 *
-*   ABTREE is returned TRUE unlrdd it is known that the whole menu tree
-*   should not be aborted.
+*   ABTREE is returned TRUE unless it is known that the whole menu tree should
+*   not be aborted.
 }
 function chessv_mmenu_file (           {perform main menu FILE operation}
   in      ulx, uly: real;              {preferred sub menu UL in root window}
@@ -401,9 +401,8 @@ label
 *   This routine is local to CHESSV_MMENU_FILE
 *
 *   Create the list of previously existing chess files in FLIST.  FLIST is
-*   assumed to be uninitialized before this call.  FLIST will contain the
-*   the generic leafnames of chess position files in the directory
-*   indicated by DIR.
+*   assumed to be uninitialized before this call.  FLIST will contain the the
+*   generic leafnames of chess position files in the directory indicated by DIR.
 }
 procedure list_files;
 
@@ -462,13 +461,12 @@ done:                                  {done reading the directory}
 *   Local subroutine SELECT_FILE (FNAM)
 *   This subroutine is local to CHESSV_MMENU_FILE.
 *
-*   Allow the user to pick from the list of previously existing chess
-*   position files.  The function returns TRUE if a selection was made,
-*   and FALSE if the selection was cancelled.
+*   Allow the user to pick from the list of previously existing chess position
+*   files.  The function returns TRUE if a selection was made, and FALSE if the
+*   selection was cancelled.
 *
-*   The new menu will be drawn stemming from the selected top level menu
-*   entry.  SEL_P is assumed to be pointing to the selected top level menu
-*   entry.
+*   The new menu will be drawn stemming from the selected top level menu entry.
+*   SEL_P is assumed to be pointing to the selected top level menu entry.
 }
 function select_file (                 {select from list of existing chess pos files}
   in out  fnam: string_treename_t)     {pathname of selected file}
